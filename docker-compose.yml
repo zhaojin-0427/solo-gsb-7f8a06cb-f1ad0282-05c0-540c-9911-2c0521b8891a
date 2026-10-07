@@ -1,0 +1,21 @@
+services:
+  firmware-coordinator:
+    build: .
+    image: firmware-coordinator:latest
+    container_name: firmware-coordinator
+    ports:
+      - "8080:8080"
+    environment:
+      FIRMWARE_DB_PATH: /data/firmware.db
+      FIRMWARE_PORT: "8080"
+    volumes:
+      - firmware-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  firmware-data:
